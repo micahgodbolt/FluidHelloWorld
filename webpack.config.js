@@ -19,7 +19,7 @@ module.exports = env => {
     return {
         devtool: "inline-source-map",
         entry: {
-            app: "./src/app.ts",
+            app: "./src/app.tsx",
         },
         mode,
         module: {
@@ -33,7 +33,7 @@ module.exports = env => {
         },
         plugins,
         resolve: {
-            extensions: [".ts", ".js"],
+            extensions: [".ts", ".tsx", ".js"],
         },
         
     };

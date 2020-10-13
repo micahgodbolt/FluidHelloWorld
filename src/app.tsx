@@ -2,13 +2,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-
+import * as  React from "react";
+import * as ReactDOM from "react-dom";
 import { getDefaultObjectFromContainer } from "@fluidframework/aqueduct";
 import { getTinyliciousContainer } from "@fluidframework/get-tinylicious-container";
-
-import { DiceRollerContainerRuntimeFactory } from "./containerCode";
-import { IDiceRoller } from "./dataObject";
-import { renderDiceRoller } from "./view";
+import { FluentListView } from "./view";
+import { FluentListContainerRuntimeFactory } from "./containerCode";
 
 // In interacting with the service, we need to be explicit about whether we're creating a new document vs. loading
 // an existing one.  We also need to provide the unique ID for the document we are creating or loading from.
@@ -31,19 +30,24 @@ async function start(): Promise<void> {
     // production service, but ultimately we'll still be getting a reference to a Container object.  The helper
     // function takes the ID of the document we're creating or loading, the container code to load into it, and a
     // flag to specify whether we're creating a new document or loading an existing one.
-    const container = await getTinyliciousContainer(documentId, DiceRollerContainerRuntimeFactory, createNew);
+    const container = await getTinyliciousContainer(documentId, FluentListContainerRuntimeFactory, createNew);
 
     // In this app, we know our container code provides a default data object that is an IDiceRoller.
-    const diceRoller: IDiceRoller = await getDefaultObjectFromContainer<IDiceRoller>(container);
+    const FluentList = await getDefaultObjectFromContainer(container);
+
 
     // Given an IDiceRoller, we can render the value and provide controls for users to roll it.
     const div = document.getElementById("content") as HTMLDivElement;
-    renderDiceRoller(diceRoller, div);
+
+    ReactDOM.render(<FluentListView model={FluentList} />, div)
 
     // Reload the page on any further hash changes, e.g. in case you want to paste in a different document ID.
     window.addEventListener("hashchange", () => {
         location.reload();
     });
 }
+
+
+
 
 start().catch((error) => console.error(error));
