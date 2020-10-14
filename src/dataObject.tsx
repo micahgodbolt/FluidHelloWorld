@@ -11,6 +11,7 @@ interface IFluentList {
     createItem: (item: IExampleItem) => void
 }
 
+
 export class FluentList extends DataObject implements IFluentList {
     private myMap: SharedMap | undefined;
 
@@ -24,14 +25,6 @@ export class FluentList extends DataObject implements IFluentList {
     protected async hasInitialized() {
         this.myMap = await this.root.get("fluentlist").get();
     }
-
-    public get items() {
-        if (!this.myMap) {
-            throw new Error("Map not initialized");
-        }
-        return Array.from(this.myMap.values());
-    }
-
 
     public get itemKeys() {
         if (!this.myMap) {

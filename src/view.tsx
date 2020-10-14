@@ -10,7 +10,6 @@ export const FluentListView = ({ model }: { model: any }) => {
 
   React.useEffect(() => {
     myMap.on("valueChanged", () => {
-      console.log('change')
       setItems(model.itemKeys)
     });
   }, [myMap]);
