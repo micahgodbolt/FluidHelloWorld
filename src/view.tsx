@@ -5,16 +5,14 @@ import { IExampleItem, createListItems } from '@uifabric/example-data';
 initializeIcons();
 
 export const FluentListView = ({ model }: { model: any }) => {
-  const { itemKeys, location, height, deleteItem, createItem, myMap } = model;
-  const [localItems, setItems] = React.useState(itemKeys);
+  const { directoryKeys, location, height, deleteItem, createItem, myDir } = model;
+  const [localItems, setItems] = React.useState(directoryKeys);
 
   React.useEffect(() => {
-    myMap.on("valueChanged", () => {
-      setItems(model.itemKeys)
+    myDir.on("valueChanged", () => {
+      setItems(model.directoryKeys)
     });
-  }, [myMap]);
-
-
+  }, [myDir]);
 
 
   const onRenderCell = (item?: IExampleItem) => {

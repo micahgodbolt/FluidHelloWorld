@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 import { DataObject, DataObjectFactory } from "@fluidframework/aqueduct";
-import { SharedMap } from "@fluidframework/map";
+import { SharedDirectory } from "@fluidframework/map";
 import { createListItems, IExampleItem } from '@uifabric/example-data';
 
 interface IFluentList {
@@ -13,65 +13,71 @@ interface IFluentList {
 
 
 export class FluentList extends DataObject implements IFluentList {
-    private myMap: SharedMap | undefined;
+    private myDir: SharedDirectory | undefined;
+
 
     protected async initializingFirstTime() {
-        const items = SharedMap.create(this.runtime);
-        createListItems(10).forEach((v: IExampleItem) => items.set(v.key, v));
-        this.root.set("fluentlist", items.handle);
+
+        const directory = SharedDirectory.create(this.runtime);
+        createListItems(10).forEach((v: IExampleItem) => {
+
+            const subdir = directory.createSubDirectory(v.key)
+            for (const k in v) {
+                subdir.set(k, v[k])
+            }
+        });
+        this.root.set("fluentDirectory", directory.handle);
     }
 
 
     protected async hasInitialized() {
-        this.myMap = await this.root.get("fluentlist").get();
+        this.myDir = await this.root.get("fluentDirectory").get();
     }
 
-    public get itemKeys() {
-        if (!this.myMap) {
+    public get directoryKeys() {
+        if (!this.myDir) {
             throw new Error("Map not initialized");
         }
-        return Array.from(this.myMap.keys());
+        // subdirectories are arrays of [key, SharedMap]
+        return Array.from(this.myDir.subdirectories()).map(item => item[0])
     }
 
 
-    private updateItemLocation = (itemKey: string, value: string) => {
-        if (this.myMap) {
-            const newItem = { ...this.myMap.get(itemKey), location: value }
-            this.myMap?.set(itemKey, newItem)
-        }
-    };
 
-    private updateItemHeight = (itemKey: string, value: string) => {
-        if (this.myMap) {
-            const newItem = { ...this.myMap.get(itemKey), height: value }
-            this.myMap?.set(itemKey, newItem)
-        }
-    };
 
     public location = (itemKey: string) => {
-        return {
-            get: () => this.myMap?.get(itemKey).location,
-            set: (value: string) => this.updateItemLocation(itemKey, value)
+        const entry = this.myDir?.getWorkingDirectory('/' + itemKey)
+        if (entry) {
+            return {
+                get: () => entry.get('location'),
+                set: (value: string) => entry.set('location', value)
+            }
         }
     }
 
     public height = (itemKey: string) => {
-        return {
-            get: () => this.myMap?.get(itemKey).height,
-            set: (value: string) => this.updateItemHeight(itemKey, value)
+        const entry = this.myDir?.getWorkingDirectory('/' + itemKey)
+        if (entry) {
+            return {
+                get: () => entry.get('height'),
+                set: (value: string) => entry.set('height', value)
+            }
         }
     }
 
     public readonly deleteItem = (itemKey: string) => {
-        if (this.myMap && this.myMap.get(itemKey)) {
-            this.myMap?.delete(itemKey)
+        if (this.myDir && this.myDir.hasSubDirectory(itemKey)) {
+            this.myDir.deleteSubDirectory(itemKey)
         }
     };
 
     public readonly createItem = (item: IExampleItem) => {
-        if (this.myMap) {
+        if (this.myDir) {
             item.key = Date.now().toString();
-            this.myMap?.set(item.key, item)
+            const subdir = this.myDir.createSubDirectory(item.key)
+            for (const k in item) {
+                subdir.set(k, item[k])
+            }
         }
     };
 
@@ -81,7 +87,7 @@ export class FluentList extends DataObject implements IFluentList {
 export const FluentListInstantiationFactory = new DataObjectFactory(
     "fluentlist",
     FluentList,
-    [SharedMap.getFactory()],
+    [SharedDirectory.getFactory()],
     {},
 );
 
