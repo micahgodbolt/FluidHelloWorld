@@ -6,16 +6,19 @@ import { FluentList } from "./dataObject"
 initializeIcons();
 
 export const FluentListView = ({ model }: { model: FluentList }) => {
-  const { directoryKeys, location, height, deleteItem, createItem, myDir } = model;
+  const { directoryKeys, location, height, deleteItem, createItem } = model;
   const [localItems, setItems] = React.useState(directoryKeys);
 
   React.useEffect(() => {
-    if (myDir) {
-      myDir.on("valueChanged", () => {
-        setItems(model.directoryKeys)
-      });
+    const changed = () => {
+      setItems(model.directoryKeys)
+    };
+    model.on("changed", changed);
+
+    return () => {
+      model.off("changed", changed)
     }
-  }, [myDir]);
+  }, [model]);
 
 
   const onRenderCell = (item?: string) => {

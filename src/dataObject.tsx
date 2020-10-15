@@ -32,6 +32,9 @@ export class FluentList extends DataObject implements IFluentList {
 
     protected async hasInitialized() {
         this.myDir = await this.root.get("fluentDirectory").get();
+        this.myDir?.on("valueChanged", () => {
+            this.emit("changed");
+        });
     }
 
     public get directoryKeys() {
