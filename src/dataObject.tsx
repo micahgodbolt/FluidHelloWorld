@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 import { DataObject, DataObjectFactory } from "@fluidframework/aqueduct";
-import { SharedDirectory } from "@fluidframework/map";
+import { ISharedDirectory, SharedDirectory } from "@fluidframework/map";
 import { createListItems, IExampleItem } from '@uifabric/example-data';
 
 interface IFluentList {
@@ -13,7 +13,7 @@ interface IFluentList {
 
 
 export class FluentList extends DataObject implements IFluentList {
-    private myDir: SharedDirectory | undefined;
+    public myDir: ISharedDirectory | undefined;
 
 
     protected async initializingFirstTime() {
@@ -42,11 +42,8 @@ export class FluentList extends DataObject implements IFluentList {
         return Array.from(this.myDir.subdirectories()).map(item => item[0])
     }
 
-
-
-
     public location = (itemKey: string) => {
-        const entry = this.myDir?.getWorkingDirectory('/' + itemKey)
+        const entry = this.myDir?.getSubDirectory(itemKey)
         if (entry) {
             return {
                 get: () => entry.get('location'),
@@ -56,11 +53,11 @@ export class FluentList extends DataObject implements IFluentList {
     }
 
     public height = (itemKey: string) => {
-        const entry = this.myDir?.getWorkingDirectory('/' + itemKey)
+        const entry = this.myDir?.getSubDirectory(itemKey)
         if (entry) {
             return {
                 get: () => entry.get('height'),
-                set: (value: string) => entry.set('height', value)
+                set: (value: number) => entry.set('height', value)
             }
         }
     }

@@ -1,23 +1,35 @@
 import * as  React from "react";
 import { List, Dropdown, IDropdownProps, initializeIcons, IDropdownOption, Slider, IconButton } from "@fluentui/react";
-import { IExampleItem, createListItems } from '@uifabric/example-data';
+import { createListItems } from '@uifabric/example-data';
+import { FluentList } from "./dataObject"
 
 initializeIcons();
 
-export const FluentListView = ({ model }: { model: any }) => {
+export const FluentListView = ({ model }: { model: FluentList }) => {
   const { directoryKeys, location, height, deleteItem, createItem, myDir } = model;
   const [localItems, setItems] = React.useState(directoryKeys);
 
   React.useEffect(() => {
-    myDir.on("valueChanged", () => {
-      setItems(model.directoryKeys)
-    });
+    if (myDir) {
+      myDir.on("valueChanged", () => {
+        setItems(model.directoryKeys)
+      });
+    }
   }, [myDir]);
 
 
-  const onRenderCell = (item?: IExampleItem) => {
+  const onRenderCell = (item?: string) => {
+    if (!item) {
+      console.log("something bad happened");
+      return;
+    }
+
     const itemHeight = height(item);
     const itemLocation = location(item);
+
+    if (!itemHeight || !itemLocation) {
+      return;
+    }
 
     const dropdownProps: IDropdownProps = {
       styles: { root: { display: 'inline-block', minWidth: 300 } },
@@ -30,7 +42,9 @@ export const FluentListView = ({ model }: { model: any }) => {
       ],
       selectedKey: itemLocation.get(),
       onChange: (event: React.FormEvent<HTMLDivElement>, option: IDropdownOption | undefined): void => {
-        itemLocation.set(option?.key)
+        if (option?.key !== undefined) {
+          itemLocation.set(option?.key as string)
+        }
       }
     }
 

@@ -8,6 +8,7 @@ import { getDefaultObjectFromContainer } from "@fluidframework/aqueduct";
 import { getTinyliciousContainer } from "@fluidframework/get-tinylicious-container";
 import { FluentListView } from "./view";
 import { FluentListContainerRuntimeFactory } from "./containerCode";
+import { FluentList } from "./dataObject";
 
 // In interacting with the service, we need to be explicit about whether we're creating a new document vs. loading
 // an existing one.  We also need to provide the unique ID for the document we are creating or loading from.
@@ -33,7 +34,7 @@ async function start(): Promise<void> {
     const container = await getTinyliciousContainer(documentId, FluentListContainerRuntimeFactory, createNew);
 
     // In this app, we know our container code provides a default data object that is an IDiceRoller.
-    const FluentList = await getDefaultObjectFromContainer(container);
+    const FluentList = await getDefaultObjectFromContainer<FluentList>(container);
 
 
     // Given an IDiceRoller, we can render the value and provide controls for users to roll it.
