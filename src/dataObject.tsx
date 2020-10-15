@@ -68,6 +68,7 @@ export class FluentList extends DataObject implements IFluentList {
     public readonly deleteItem = (itemKey: string) => {
         if (this.myDir && this.myDir.hasSubDirectory(itemKey)) {
             this.myDir.deleteSubDirectory(itemKey)
+            this.emit("changed");
         }
     };
 
