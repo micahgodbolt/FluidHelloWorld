@@ -6,13 +6,9 @@ import { DataObject, DataObjectFactory } from "@fluidframework/aqueduct";
 import { ISharedDirectory, SharedDirectory } from "@fluidframework/map";
 import { createListItems, IExampleItem } from '@uifabric/example-data';
 
-interface IFluentList {
-    deleteItem: (itemKey: string) => void
-    createItem: (item: IExampleItem) => void
-}
 
 
-export class FluentList extends DataObject implements IFluentList {
+export class FluentList extends DataObject {
     public myDir: ISharedDirectory | undefined;
 
 
@@ -37,50 +33,9 @@ export class FluentList extends DataObject implements IFluentList {
         });
     }
 
-    public get directoryKeys() {
-        if (!this.myDir) {
-            throw new Error("Map not initialized");
-        }
-        // subdirectories are arrays of [key, SharedMap]
-        return Array.from(this.myDir.subdirectories()).map(item => item[0])
+    public emitEvent = (event: string) => {
+        this.emit(event);
     }
-
-    public location = (itemKey: string) => {
-        const entry = this.myDir?.getSubDirectory(itemKey)
-        if (entry) {
-            return {
-                get: () => entry.get('location'),
-                set: (value: string) => entry.set('location', value)
-            }
-        }
-    }
-
-    public height = (itemKey: string) => {
-        const entry = this.myDir?.getSubDirectory(itemKey)
-        if (entry) {
-            return {
-                get: () => entry.get('height'),
-                set: (value: number) => entry.set('height', value)
-            }
-        }
-    }
-
-    public readonly deleteItem = (itemKey: string) => {
-        if (this.myDir && this.myDir.hasSubDirectory(itemKey)) {
-            this.myDir.deleteSubDirectory(itemKey)
-            this.emit("changed");
-        }
-    };
-
-    public readonly createItem = (item: IExampleItem) => {
-        if (this.myDir) {
-            item.key = Date.now().toString();
-            const subdir = this.myDir.createSubDirectory(item.key)
-            for (const k in item) {
-                subdir.set(k, item[k])
-            }
-        }
-    };
 
 }
 

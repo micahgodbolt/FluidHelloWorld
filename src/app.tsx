@@ -10,6 +10,8 @@ import { FluentListView } from "./view";
 import { FluentListContainerRuntimeFactory } from "./containerCode";
 import { FluentList } from "./dataObject";
 
+import { FluidContext } from "./redux/contextProvider";
+
 // In interacting with the service, we need to be explicit about whether we're creating a new document vs. loading
 // an existing one.  We also need to provide the unique ID for the document we are creating or loading from.
 
@@ -40,7 +42,15 @@ async function start(): Promise<void> {
     // Given an IDiceRoller, we can render the value and provide controls for users to roll it.
     const div = document.getElementById("content") as HTMLDivElement;
 
-    ReactDOM.render(<FluentListView model={FluentList} />, div)
+    const contextValue = {
+        ...FluentList
+    } as FluentList
+
+    ReactDOM.render(
+        <FluidContext.Provider value={contextValue} >
+            <FluentListView />
+        </FluidContext.Provider >, div)
+
 
     // Reload the page on any further hash changes, e.g. in case you want to paste in a different document ID.
     window.addEventListener("hashchange", () => {
