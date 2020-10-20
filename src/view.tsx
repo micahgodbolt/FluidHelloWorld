@@ -1,9 +1,9 @@
 import * as  React from "react";
-import { List, Dropdown, IDropdownProps, initializeIcons, IDropdownOption, Slider, IconButton } from "@fluentui/react";
+import { List, Dropdown, IDropdownProps, initializeIcons, IDropdownOption, Slider, IconButton, TextField, PrimaryButton, Stack } from "@fluentui/react";
 import { IExampleItem } from '@uifabric/example-data';
-import { useItems } from "./redux/selectors";
+import { useItems, useComments } from "./redux/selectors";
 import { useDispatch } from './redux/hooks'
-import { addItem, deleteItem, updateItemHeight, updateItemLocation } from "./redux/actions";
+import { addItem, deleteItem, updateItemHeight, updateItemLocation, addComment } from "./redux/actions";
 
 initializeIcons();
 
@@ -11,6 +11,8 @@ export const FluentListView = () => {
 
   const items = useItems();
   const dispatch = useDispatch();
+  const comments = useComments();
+  const [inputText, setInputText] = React.useState('');
 
   const onRenderCell = (item?: IExampleItem) => {
     if (!item) {
@@ -54,11 +56,24 @@ export const FluentListView = () => {
     )
   }
 
+  const onRenderComment = (item: any) => {
+    return <p>{item.value}</p>
+  }
 
   return (
     <div>
       {items.length > 0 ? <List items={items} onRenderCell={onRenderCell} /> : <></>}<br /><br />
-      <IconButton onClick={() => dispatch(addItem())} iconProps={{ iconName: "Add" }} />
+      <IconButton onClick={() => dispatch(addItem())} iconProps={{ iconName: "Add" }} /> <br /><br /><br /><br />
+      {comments.length > 0 ? <List items={comments} onRenderCell={onRenderComment} /> : <></>}
+      <Stack horizontal>
+        <TextField value={inputText} onChange={(e, i) => setInputText(i!)} />
+        <PrimaryButton onClick={() => {
+          dispatch(addComment(inputText))
+          setInputText('')
+        }
+        }
+        >Enter</PrimaryButton>
+      </Stack>
     </div>
   )
 

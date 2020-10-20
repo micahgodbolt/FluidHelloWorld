@@ -30,3 +30,10 @@ export const deleteItem = (id: string) => ({
     id
   }
 })
+
+export const addComment = (comment: string) => ({
+  type: "ADD_COMMENT",
+  payload: {
+    comment
+  }
+})

@@ -17,6 +17,7 @@
     "@fluidframework/aqueduct": "^0.26.0",
     "@fluidframework/get-tinylicious-container": "^0.26.0",
     "@fluidframework/map": "^0.26.0",
+    "@fluidframework/sequence": "^0.26.0",
     "@fluidframework/view-interfaces": "^0.26.0",
     "@types/react": "^16.9.52",
     "@types/react-dom": "^16.9.8",

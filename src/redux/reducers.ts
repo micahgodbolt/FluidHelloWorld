@@ -1,7 +1,7 @@
 import { FluentList } from "../dataObject";
 
 export const rootReducer = (context: FluentList, action: any) => {
-  const {myDir: data} = context;
+  const {myDir: data, comments} = context;
   if (!data) {return};
   
   switch (action.type) {
@@ -37,9 +37,19 @@ export const rootReducer = (context: FluentList, action: any) => {
       const { id } = action.payload;
       if (data.hasSubDirectory(id)) {
         data.deleteSubDirectory(id)
-        context.emitEvent('changed');
+        context.emitEvent('directoryChanged');
       }
       return;
-    }    
+    }  
+    
+    case "ADD_COMMENT": {
+      if (comments) {
+        comments.insert(comments.getItemCount(), [{
+          value: action.payload.comment,
+          timestamp: new Date(),
+        }])
+      };
+      return;
+    }  
   }
 }
