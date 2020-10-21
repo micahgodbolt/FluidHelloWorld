@@ -42,12 +42,8 @@ async function start(): Promise<void> {
     // Given an IDiceRoller, we can render the value and provide controls for users to roll it.
     const div = document.getElementById("content") as HTMLDivElement;
 
-    const contextValue = {
-        ...FluentList
-    } as FluentList
-
     ReactDOM.render(
-        <FluidContext.Provider value={contextValue} >
+        <FluidContext.Provider value={FluentList} >
             <FluentListView />
         </FluidContext.Provider >, div)
 

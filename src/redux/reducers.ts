@@ -1,7 +1,8 @@
 import { FluentList } from "../dataObject";
+import { diffStringsRaw } from "jest-diff";
 
-export const rootReducer = (context: FluentList, action: any) => {
-  const { myDir, mySequence, myString } = context;
+export const rootReducer = (dataObject: FluentList, action: any) => {
+  const { myDir, mySequence, myString } = dataObject;
   if (!myDir) {
     return;
   }
@@ -39,7 +40,7 @@ export const rootReducer = (context: FluentList, action: any) => {
       const { id } = action.payload;
       if (myDir.hasSubDirectory(id)) {
         myDir.deleteSubDirectory(id);
-        context.emitEvent("directoryChanged");
+        dataObject.emitEvent("directoryChanged");
       }
       return;
     }
@@ -58,7 +59,22 @@ export const rootReducer = (context: FluentList, action: any) => {
     case "UPDATE_TEXTFIELD": {
       const { text } = action.payload;
       if (myString) {
-        myString.replaceText(0, myString.getLength(), text);
+        const diffs = diffStringsRaw(myString.getText(), text, true)
+        let pos = 0;
+        diffs.forEach((diff, i) => {
+          switch (diff[0]) {
+            case 0:
+              pos += diff[1].length;
+            break;
+            case 1:
+              myString.insertText(pos, diff[1])
+              pos += diff[1].length;
+            break;
+            case -1:
+              myString.removeText(pos, pos + diff[1].length)
+            break;
+          }
+        })
       }
       return;
     }
