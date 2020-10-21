@@ -4,61 +4,71 @@
  */
 import { DataObject, DataObjectFactory } from "@fluidframework/aqueduct";
 import { ISharedDirectory, SharedDirectory } from "@fluidframework/map";
-import { createListItems, IExampleItem } from '@uifabric/example-data';
-import { SharedObjectSequence } from "@fluidframework/sequence";
-
+import { createListItems, IExampleItem } from "@uifabric/example-data";
+import { SharedObjectSequence, SharedString } from "@fluidframework/sequence";
 
 export class FluentList extends DataObject {
-    public myDir: ISharedDirectory | undefined;
-    public comments: SharedObjectSequence<any> | undefined;
+  public myDir: ISharedDirectory | undefined;
+  public mySequence: SharedObjectSequence<any> | undefined;
+  public myString: SharedString | undefined;
 
-    protected async initializingFirstTime() {
+  protected async initializingFirstTime() {
+    // Shared Directory
+    const directory = SharedDirectory.create(this.runtime);
+    createListItems(10).forEach((v: IExampleItem) => {
+      const subdir = directory.createSubDirectory(v.key);
+      for (const k in v) {
+        subdir.set(k, v[k]);
+      }
+    });
+    this.root.set("fluentDirectory", directory.handle);
 
-        const directory = SharedDirectory.create(this.runtime);
-        createListItems(10).forEach((v: IExampleItem) => {
-            const subdir = directory.createSubDirectory(v.key)
-            for (const k in v) {
-                subdir.set(k, v[k])
-            }
-        });
-        this.root.set("fluentDirectory", directory.handle);
+    // Shared Sequence
+    const fluentSequence = SharedObjectSequence.create<any>(this.runtime);
+    fluentSequence.insert(0, [
+      {
+        value: "Say Something",
+        timestamp: new Date(),
+      },
+    ]);
+    this.root.set("fluentSequence", fluentSequence.handle);
 
+    // Shared String
+    const fluentString = SharedString.create(this.runtime);
+    fluentString.insertText(0, "Starting Text");
+    this.root.set("fluentString", fluentString.handle);
+  }
 
-        const commentHistory = SharedObjectSequence.create<any>(this.runtime);
-        commentHistory.insert(0, [{
-            value: "Say Something",
-            timestamp: new Date(),
-        }]);
-        this.root.set('commentHistory', commentHistory.handle);
-    }
+  protected async hasInitialized() {
+    this.myDir = await this.root.get("fluentDirectory").get();
+    this.mySequence = await this.root.get("fluentSequence").get();
+    this.myString = await this.root.get("fluentString").get();
 
+    this.myDir?.on("valueChanged", () => {
+      this.emit("directoryChanged");
+    });
 
-    protected async hasInitialized() {
-        this.myDir = await this.root.get("fluentDirectory").get();
-        this.comments = await this.root.get("commentHistory").get();
+    this.mySequence?.on("sequenceDelta", () => {
+      this.emit("sequenceChanged");
+    });
 
-        this.myDir?.on("valueChanged", () => {
-            this.emit("directoryChanged");
-        });
+    this.myString?.on("sequenceDelta", () => {
+      this.emit("stringChanged");
+    });
+  }
 
-        this.comments?.on("sequenceDelta", () => {
-            console.log('changed')
-            this.emit("commentsChanged");
-        });
-    }
-
-    public emitEvent = (event: string) => {
-        this.emit(event);
-    }
-
+  public emitEvent = (event: string) => {
+    this.emit(event);
+  };
 }
 
-
 export const FluentListInstantiationFactory = new DataObjectFactory(
-    "fluentlist",
-    FluentList,
-    [SharedDirectory.getFactory(), SharedObjectSequence.getFactory()],
-    {},
+  "fluentlist",
+  FluentList,
+  [
+    SharedDirectory.getFactory(),
+    SharedObjectSequence.getFactory(),
+    SharedString.getFactory(),
+  ],
+  {}
 );
-
-

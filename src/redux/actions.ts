@@ -1,39 +1,46 @@
-import { createListItems } from '@uifabric/example-data';
+import { createListItems } from "@uifabric/example-data";
 
 export const updateItemHeight = (id: string, height: number) => ({
   type: "HEIGHT",
   payload: {
     id,
-    height
-  }
-})
+    height,
+  },
+});
 
 export const updateItemLocation = (id: string, location: string) => ({
   type: "LOCATION",
   payload: {
     id,
-    location
-  }
-})
+    location,
+  },
+});
 
-export const addItem = () =>({
+export const addItem = () => ({
   type: "ADD",
   payload: {
     id: Date.now().toString(),
-    item: createListItems(1)[0]
-  }
-})
+    item: createListItems(1)[0],
+  },
+});
 
 export const deleteItem = (id: string) => ({
   type: "DELETE",
   payload: {
-    id
-  }
-})
+    id,
+  },
+});
 
 export const addComment = (comment: string) => ({
   type: "ADD_COMMENT",
   payload: {
-    comment
-  }
-})
+    comment,
+  },
+});
+
+export const updateTextField = (text: string | undefined) => ({
+  type: "UPDATE_TEXTFIELD",
+  payload: {
+    text,
+  },
+});
