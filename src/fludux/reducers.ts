@@ -3,7 +3,7 @@ import { diffStringsRaw } from "jest-diff";
 
 export const rootReducer = (dataObject: FluentList, action: any) => {
   const { myDir, mySequence, myString } = dataObject;
-  if (!myDir) {
+  if (!myDir || !mySequence || !myString) {
     return;
   }
 
@@ -46,36 +46,33 @@ export const rootReducer = (dataObject: FluentList, action: any) => {
     }
 
     case "ADD_COMMENT": {
-      if (mySequence) {
         mySequence.insert(mySequence.getItemCount(), [
           {
             value: action.payload.comment,
             timestamp: new Date(),
           },
         ]);
-      }
       return;
     }
+
     case "UPDATE_TEXTFIELD": {
       const { text } = action.payload;
-      if (myString) {
-        const diffs = diffStringsRaw(myString.getText(), text, true)
-        let pos = 0;
-        diffs.forEach((diff, i) => {
-          switch (diff[0]) {
-            case 0:
-              pos += diff[1].length;
-            break;
-            case 1:
-              myString.insertText(pos, diff[1])
-              pos += diff[1].length;
-            break;
-            case -1:
-              myString.removeText(pos, pos + diff[1].length)
-            break;
-          }
-        })
-      }
+      const diffs = diffStringsRaw(myString.getText(), text, true)
+      let pos = 0;
+      diffs.forEach((diff, i) => {
+        switch (diff[0]) {
+          case 0:
+            pos += diff[1].length;
+          break;
+          case 1:
+            myString.insertText(pos, diff[1])
+            pos += diff[1].length;
+          break;
+          case -1:
+            myString.removeText(pos, pos + diff[1].length)
+          break;
+        }
+      })
       return;
     }
   }

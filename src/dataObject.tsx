@@ -15,7 +15,7 @@ export class FluentList extends DataObject {
   protected async initializingFirstTime() {
     // Shared Directory
     const directory = SharedDirectory.create(this.runtime);
-    createListItems(10).forEach((v: IExampleItem) => {
+    createListItems(20).forEach((v: IExampleItem) => {
       const subdir = directory.createSubDirectory(v.key);
       for (const k in v) {
         subdir.set(k, v[k]);

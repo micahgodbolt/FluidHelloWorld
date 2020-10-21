@@ -1,8 +1,8 @@
 import * as React from "react";
 import { TextField, ITextField } from "@fluentui/react";
-import { useTextField } from "../redux/selectors";
-import { useDispatch } from "../redux/hooks";
-import { updateTextField } from "../redux/actions";
+import { useTextField } from "../fludux/selectors";
+import { useDispatch } from "../fludux/hooks";
+import { updateTextField } from "../fludux/actions";
 
 export const SharedString = () => {
   const dispatch = useDispatch();

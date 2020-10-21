@@ -4,10 +4,10 @@ import { FluentList } from "../dataObject";
 import { rootReducer } from "./reducers";
 
 
-export const useSelector = (selectorFunction: (dataObject: FluentList) => any, eventName: string): any => {
+export const useSelector = <T,>(selectorFunction: (dataObject: FluentList) => T, eventNames: string[]): T => {
   const dataObject = React.useContext(FluidContext);
 
-  const [selectorState, setSelectorState] = React.useState(
+  const [selectorState, setSelectorState] = React.useState<T>(
     selectorFunction(dataObject)
   );
   const updateSelectorState = () => {
@@ -15,8 +15,15 @@ export const useSelector = (selectorFunction: (dataObject: FluentList) => any, e
   };
 
   React.useEffect(() => {
-    dataObject.on(eventName, updateSelectorState);
-    () => dataObject.off(eventName, updateSelectorState);
+    eventNames.forEach(name => {
+      dataObject.on(name, updateSelectorState)
+    });
+
+    () => {
+      eventNames.forEach(name => {
+        dataObject.off(name, updateSelectorState)
+      })
+    }
   }, [dataObject]);
 
   return selectorState;

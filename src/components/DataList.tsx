@@ -8,19 +8,20 @@ import {
   IconButton,
 } from "@fluentui/react";
 import { IExampleItem } from "@uifabric/example-data";
-import { useItems } from "../redux/selectors";
-import { useDispatch } from "../redux/hooks";
+import { useItems } from "../fludux/selectors";
+import { useDispatch } from "../fludux/hooks";
 import {
   addItem,
   deleteItem,
   updateItemHeight,
   updateItemLocation,
-} from "../redux/actions";
+} from "../fludux/actions";
 
 export const DataList = () => {
-  const dispatch = useDispatch();
 
   const items = useItems();
+
+  const dispatch = useDispatch();
 
 
   const onRenderCell = (item?: IExampleItem) => {

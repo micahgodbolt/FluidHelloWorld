@@ -10,7 +10,7 @@ import { FluentListView } from "./view";
 import { FluentListContainerRuntimeFactory } from "./containerCode";
 import { FluentList } from "./dataObject";
 
-import { FluidContext } from "./redux/contextProvider";
+import { FluidContext } from "./fludux/contextProvider";
 
 // In interacting with the service, we need to be explicit about whether we're creating a new document vs. loading
 // an existing one.  We also need to provide the unique ID for the document we are creating or loading from.
