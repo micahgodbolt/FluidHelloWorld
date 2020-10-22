@@ -8,25 +8,16 @@ export const rootReducer = (dataObject: FluentList, action: any) => {
   }
 
   switch (action.type) {
-    case "HEIGHT": {
-      const { id, height } = action.payload;
-      const entry = myDir.getSubDirectory(id);
-      if (entry) {
-        entry.set("height", height);
+    case "UPDATE_ITEM": {
+      const {id, updates} = action.payload;
+      const subDir = dataObject.myDir?.getSubDirectory(id);
+      for (const key in updates) {
+        subDir?.set(key, updates[key])
       }
       return;
-    }
+    } 
 
-    case "LOCATION": {
-      const { id, location } = action.payload;
-      const entry = myDir.getSubDirectory(id);
-      if (entry) {
-        entry.set("location", location);
-      }
-      return;
-    }
-
-    case "ADD": {
+    case "ADD_ITEM": {
       const { id, item } = action.payload;
       item.key = id;
       const subdir = myDir.createSubDirectory(item.key);
@@ -36,7 +27,7 @@ export const rootReducer = (dataObject: FluentList, action: any) => {
       return;
     }
 
-    case "DELETE": {
+    case "DELETE_ITEM": {
       const { id } = action.payload;
       if (myDir.hasSubDirectory(id)) {
         myDir.deleteSubDirectory(id);

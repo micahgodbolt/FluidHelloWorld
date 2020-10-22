@@ -1,23 +1,16 @@
-import { createListItems } from "@uifabric/example-data";
+import { createListItems, IExampleItem } from "@uifabric/example-data";
 
-export const updateItemHeight = (id: string, height: number) => ({
-  type: "HEIGHT",
+
+export const updateItem = (id: string, updates: Partial<Omit<IExampleItem, "id">>) => ({
+  type: "UPDATE_ITEM",
   payload: {
     id,
-    height,
-  },
-});
-
-export const updateItemLocation = (id: string, location: string) => ({
-  type: "LOCATION",
-  payload: {
-    id,
-    location,
+    updates,
   },
 });
 
 export const addItem = () => ({
-  type: "ADD",
+  type: "ADD_ITEM",
   payload: {
     id: Date.now().toString(),
     item: createListItems(1)[0],
@@ -25,7 +18,7 @@ export const addItem = () => ({
 });
 
 export const deleteItem = (id: string) => ({
-  type: "DELETE",
+  type: "DELETE_ITEM",
   payload: {
     id,
   },

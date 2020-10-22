@@ -13,8 +13,7 @@ import { useDispatch } from "../fludux/hooks";
 import {
   addItem,
   deleteItem,
-  updateItemHeight,
-  updateItemLocation,
+  updateItem
 } from "../fludux/actions";
 
 export const DataList = () => {
@@ -45,7 +44,7 @@ export const DataList = () => {
         option: IDropdownOption | undefined
       ): void => {
         if (option?.key !== undefined) {
-          dispatch(updateItemLocation(item.key, option.key.toString()));
+          dispatch(updateItem(item.key, { 'location': option.key.toString() }));
         }
       },
     };
@@ -61,7 +60,7 @@ export const DataList = () => {
           value={item.height}
           min={100}
           max={300}
-          onChanged={(e, value) => dispatch(updateItemHeight(item.key, value))}
+          onChanged={(e, value) => dispatch(updateItem(item.key, { 'height': value }))}
         />
         <IconButton
           onClick={() => dispatch(deleteItem(item.key))}
