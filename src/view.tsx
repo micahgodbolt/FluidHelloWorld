@@ -7,7 +7,7 @@ import { SharedString, CommentList, DataList } from './components'
 
 initializeIcons();
 
-export const FluentListView = () => {
+export const View = () => {
   return (
     <Stack gap={24}>
       <DataList />

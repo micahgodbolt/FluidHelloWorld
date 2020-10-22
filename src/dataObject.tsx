@@ -39,6 +39,7 @@ export class FluentList extends DataObject {
     this.root.set("fluentString", fluentString.handle);
   }
 
+  // Initialize and setup events
   protected async hasInitialized() {
     this.myDir = await this.root.get("fluentDirectory").get();
     this.mySequence = await this.root.get("fluentSequence").get();

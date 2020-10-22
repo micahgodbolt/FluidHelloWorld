@@ -6,7 +6,7 @@ import * as  React from "react";
 import * as ReactDOM from "react-dom";
 import { getDefaultObjectFromContainer } from "@fluidframework/aqueduct";
 import { getTinyliciousContainer } from "@fluidframework/get-tinylicious-container";
-import { FluentListView } from "./view";
+import { View } from "./view";
 import { FluentListContainerRuntimeFactory } from "./containerCode";
 import { FluentList } from "./dataObject";
 
@@ -44,7 +44,7 @@ async function start(): Promise<void> {
 
     ReactDOM.render(
         <FluidContext.Provider value={FluentList} >
-            <FluentListView />
+            <View />
         </FluidContext.Provider >, div)
 
 
